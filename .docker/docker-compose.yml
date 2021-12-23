@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: ../
+      dockerfile: .docker/php/8.1/Dockerfile
+    environment:
+      MESSENGER_KAFKA_DSN: ${MESSENGER_KAFKA_DSN}
+      MESSENGER_KAFKA_DEBUG: ${MESSENGER_KAFKA_DEBUG}
+      RDKAFKA_ADDRESS: ${RDKAFKA_ADDRESS}
+      RDKAFKA_DSN: ${RDKAFKA_DSN}
+    env_file:
+      - '../.env'
+    extra_hosts:
+      - 'kafka:192.168.100.110'
+    volumes:
+      - src:/var/www/html:cached
+
+volumes:
+  src:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
+      device: ":$PWD/"

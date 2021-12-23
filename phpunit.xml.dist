@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         printerClass="Sempro\PHPUnitPrettyPrinter\PrettyPrinterForPhpUnit9"
+         bootstrap="vendor/autoload.php"
+         failOnRisky="true"
+         failOnWarning="true"
+>
+    <php>
+        <ini name="error_reporting" value="-1" />
+        <env name="MESSENGER_KAFKA_DSN" value="kafka://213.139.212.99:29092" />
+    </php>
+
+    <testsuites>
+        <testsuite name="Symfony Kafka Messenger Component Test Suite">
+            <directory>./Tests/</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage>
+        <include>
+            <directory suffix=".php">./</directory>
+        </include>
+        <exclude>
+            <directory>./Tests</directory>
+            <directory>./Resources</directory>
+            <directory>./vendor</directory>
+            <file>./.php-cs-fixer.dist.php</file>
+            <file>./KafkaMessengerBundle.php</file>
+            <file>./KafkaMessengerExtension.php</file>
+        </exclude>
+    </coverage>
+</phpunit>
