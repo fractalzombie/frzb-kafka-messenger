@@ -32,7 +32,7 @@
         "symfony/event-dispatcher": "^5.4|^6.0",
         "symfony/process": "^5.4|^6.0",
         "symfony/property-access": "^5.4|^6.0",
-        "symfony/serializer": "^5.4|^6.0",
+        "symfony/serializer": "^5.4.x-dev",
         "symfony/var-dumper": "^5.4|^6.0",
         "symfony/uid": "^5.4|^6.0",
         "whsv26/functional": "^4.10",
