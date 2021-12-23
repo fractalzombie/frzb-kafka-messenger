@@ -28,7 +28,7 @@ final class KafkaStamp
         private int $timestamp,
         private string $body = '',
         private array $headers = [],
-        private int $partition = \RD_KAFKA_PARTITION_UA,
+        private int $partition = RD_KAFKA_PARTITION_UA,
         private ?string $key = null,
         private bool $isRedelivered = false,
     ) {
@@ -43,8 +43,8 @@ final class KafkaStamp
             $message->offset,
             $message->timestamp,
             $message->payload,
-            $message->headers,
-            $message->partition,
+            $message->headers ?? [],
+            $message->partition ?? RD_KAFKA_PARTITION_UA,
             $message->key,
             $isRedelivered,
         );

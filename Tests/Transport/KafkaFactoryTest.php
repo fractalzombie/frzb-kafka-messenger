@@ -19,7 +19,7 @@ class KafkaFactoryTest extends TestCase
 {
     public function testFromDsnAndOptionsMethod(): void
     {
-        $dsn = 'kafka://kafka:9092';
+        $dsn = getenv('MESSENGER_KAFKA_DSN') ?: 'kafka://0.0.0.0:9092';
         $options = OptionsHelper::getOptions();
         $factory = KafkaFactory::fromDsnAndOptions($dsn, $options);
 

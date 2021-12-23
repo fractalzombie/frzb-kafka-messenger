@@ -15,7 +15,9 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Transport;
 
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\ExtensionException;
 use FRZB\Component\Messenger\Bridge\Kafka\Helper\ConfigHelper;
+use JetBrains\PhpStorm\Pure;
 use Psr\Log\NullLogger;
+use Symfony\Component\ErrorHandler\BufferingLogger;
 use Symfony\Component\Messenger\Transport\Serialization\PhpSerializer;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Messenger\Transport\TransportFactoryInterface;
@@ -26,10 +28,13 @@ use Symfony\Component\Messenger\Transport\TransportInterface;
  */
 class KafkaTransportFactory implements TransportFactoryInterface
 {
+    #[Pure]
     public function __construct(
-        private KafkaLogger $logger,
-        private bool $isDebug,
+        private ?KafkaLogger $logger = null,
+        private bool $isDebug = false,
     ) {
+        $innerLogger = $this->isDebug ? new BufferingLogger() : new NullLogger();
+        $this->logger ??= new KafkaLogger($innerLogger);
     }
 
     public function createTransport(string $dsn, array $options, ?SerializerInterface $serializer = null): TransportInterface
@@ -38,10 +43,9 @@ class KafkaTransportFactory implements TransportFactoryInterface
         $senderConfig = ConfigHelper::createSenderConfig($options);
         $kafkaFactory = KafkaFactory::fromDsnAndOptions($dsn, $options);
         $connection = new Connection($kafkaFactory);
-        $logger = $this->isDebug ? $this->logger : new KafkaLogger(new NullLogger());
         $serializer ??= new PhpSerializer();
 
-        return new KafkaTransport($connection, $receiverConfig, $senderConfig, $serializer, $logger);
+        return new KafkaTransport($connection, $receiverConfig, $senderConfig, $serializer, $this->logger);
     }
 
     public function supports(string $dsn, array $options): bool

@@ -16,11 +16,9 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Tests\Transport;
 use Fp\Collections\ArrayList;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\KafkaMessage;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\OptionsHelper;
-use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaLogger;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceivedStamp;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaTransportFactory;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\ErrorHandler\BufferingLogger;
 use Symfony\Component\Messenger\Envelope;
 
 /**
@@ -32,20 +30,14 @@ use Symfony\Component\Messenger\Envelope;
  */
 class KafkaExtIntegrationTest extends TestCase
 {
-    protected function setUp(): void
+    public function testItSendsAndReceivesMessages(): void
     {
-        parent::setUp();
-
         if (!getenv('MESSENGER_KAFKA_DSN')) {
             $this->markTestSkipped('The "MESSENGER_KAFKA_DSN" environment variable is required.');
         }
-    }
 
-    public function testItSendsAndReceivesMessages(): void
-    {
         $options = OptionsHelper::getOptions();
-        $logger = new KafkaLogger(new BufferingLogger());
-        $transport = (new KafkaTransportFactory($logger, false))->createTransport(getenv('MESSENGER_KAFKA_DSN'), $options);
+        $transport = (new KafkaTransportFactory())->createTransport(getenv('MESSENGER_KAFKA_DSN'), $options);
 
         $transport->send($first = new Envelope(new KafkaMessage('Message')));
 

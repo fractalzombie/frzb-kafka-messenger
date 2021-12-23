@@ -1,0 +1,47 @@
+build:
+  tests:
+    override:
+      - true
+
+  nodes:
+    tests:
+      dependencies:
+        before:
+          - sudo apt update
+          - sudo apt install -y librdkafka1 librdkafka-dev
+      environment:
+        php:
+          pecl_extensions:
+            - rdkafka
+            - xdebug
+    analysis:
+      dependencies:
+        before:
+          - sudo apt update
+          - sudo apt install -y librdkafka1 librdkafka-dev
+      environment:
+        php:
+          pecl_extensions:
+            - rdkafka
+            - xdebug
+      tests:
+        override: [php-scrutinizer-run]
+
+    coverage:
+      tests:
+        override:
+          - command: php vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml --coverage-clover var/tests/coverage/coverage.xml
+            coverage:
+              file: var/tests/coverage/coverage.xml
+              format: clover
+
+  environment:
+    php: 8.0.13
+
+filter:
+  excluded_paths:
+    - "Tests/*"
+    - "var/*"
+    - "Resources/*"
+  dependency_paths:
+    - "vendor/*"

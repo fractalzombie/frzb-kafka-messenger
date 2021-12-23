@@ -68,7 +68,7 @@ class KafkaLogger
     {
         $context = [
             'payload' => $payload['body'],
-            'headers' => json_encode($payload['headers'], \JSON_THROW_ON_ERROR),
+            'headers' => json_encode($payload['headers'] ?? [], \JSON_THROW_ON_ERROR),
         ];
 
         $this->logger->info(self::PUBLISH_MESSAGE_TEMPLATE, $context);

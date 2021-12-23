@@ -45,8 +45,7 @@
     },
     "scripts": {
         "test": ["php vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml"],
-        "test-coverage": ["php vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml --coverage-html var/tests/coverage --coverage-clover var/tests/coverage/coverage.xml"],
-        "test-coverage-external": ["php -n -dzend_extension=xdebug -dxdebug.mode=coverage vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml --coverage-html var/tests/coverage --coverage-clover var/tests/coverage/coverage.xml"]
+        "test-coverage": ["php vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml --coverage-html var/tests/coverage --coverage-clover var/tests/coverage/coverage.xml"]
     },
     "minimum-stability": "dev"
 }

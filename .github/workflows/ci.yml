@@ -47,8 +47,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install rdkafka
-        run:
-          sudo add-apt-repository universe && sudo apt update && sudo apt install netcat librdkafka1 librdkafka-dev
+        run: sudo add-apt-repository universe && sudo apt update && sudo apt install netcat librdkafka1 librdkafka-dev
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -60,8 +59,10 @@ jobs:
           ini-values: post_max_size=256M
         env:
           runner: kafka-messenger
+          MESSENGER_KAFKA_DSN: 'kafka://0.0.0.0:9092'
+          MESSENGER_KAFKA_DEBUG: false
 
-      - name: check if rdkafka is there
+      - name: Check Kafka Extension
         run: php -v && php --ri rdkafka
 
       - name: Setup Composer
@@ -83,10 +84,13 @@ jobs:
 
       - name: Install dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: composer update --prefer-dist --no-progress
+        run: composer install
 
       - name: Wait for Kafka
         run: .github/workflows/wait-for-kafka.sh
 
       - name: Unit Tests
         run: ./vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml
+        env:
+          MESSENGER_KAFKA_DSN: 'kafka://0.0.0.0:9092'
+          MESSENGER_KAFKA_DEBUG: false
