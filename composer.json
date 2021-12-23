@@ -34,7 +34,7 @@
         "symfony/property-access": "^5.4|^6.0",
         "symfony/serializer": "^5.4|^6.0",
         "symfony/var-dumper": "^5.4|^6.0",
-        "symfony/uid": "^5.4|^6.0",
+        "symfony/uid": "^5.4.x-dev",
         "whsv26/functional": "^4.10",
         "friendsofphp/php-cs-fixer": "^3.4",
         "sempro/phpunit-pretty-print": "dev-develop"
