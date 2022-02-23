@@ -6,6 +6,7 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper;
 
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceivedStamp;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaStamp;
+use JetBrains\PhpStorm\Pure;
 use RdKafka\Message;
 use Symfony\Component\Messenger\Envelope;
 
@@ -52,6 +53,7 @@ final class MessageHelper
         );
     }
 
+    #[Pure]
     public static function createKafkaReceivedStamp(KafkaStamp $message, string $topicName = self::TEST_TOPIC): KafkaReceivedStamp
     {
         return new KafkaReceivedStamp($message, $topicName);

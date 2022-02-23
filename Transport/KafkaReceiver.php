@@ -33,7 +33,6 @@ class KafkaReceiver implements ReceiverInterface
         private KafkaSender $sender,
         private KafkaReceiverConfiguration $configuration,
         private Serializer $serializer,
-        private KafkaLogger $logger
     ) {
     }
 
@@ -54,14 +53,10 @@ class KafkaReceiver implements ReceiverInterface
                 'is_redelivered' => $message->isRedelivered(),
             ]);
 
-            $this->logger->logReceive($message);
-
             yield $envelope->with(new KafkaReceivedStamp($message, $message->getTopicName()));
-        } catch (KafkaException $e) {
-            $this->logger->logError($e);
-
+        } catch (KafkaException) {
             return [];
-        } catch (ConnectionException|\JsonException $e) {
+        } catch (ConnectionException $e) {
             throw new TransportException($e->getMessage(), $e->getCode(), $e);
         }
     }
@@ -73,10 +68,7 @@ class KafkaReceiver implements ReceiverInterface
 
         try {
             $this->connection->ack($stamp->getMessage(), $this->configuration);
-            $this->logger->logAcknowledge($stamp->getMessage(), $this->configuration);
-        } catch (ConnectionException|\JsonException $e) {
-            $this->logger->logError($e);
-
+        } catch (ConnectionException $e) {
             throw TransportException::fromThrowable($e);
         }
     }

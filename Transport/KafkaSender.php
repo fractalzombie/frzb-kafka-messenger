@@ -30,7 +30,6 @@ class KafkaSender implements SenderInterface
         private Connection $connection,
         private KafkaSenderConfiguration $configuration,
         private SerializerInterface $serializer,
-        private KafkaLogger $logger,
     ) {
     }
 
@@ -40,10 +39,7 @@ class KafkaSender implements SenderInterface
         try {
             $payload = $this->serializer->encode($envelope);
             $this->connection->send($payload, $this->configuration);
-            $this->logger->logProduce($payload);
-        } catch (ConnectionException|\JsonException $e) {
-            $this->logger->logError($e);
-
+        } catch (ConnectionException $e) {
             throw TransportException::fromThrowable($e);
         }
 

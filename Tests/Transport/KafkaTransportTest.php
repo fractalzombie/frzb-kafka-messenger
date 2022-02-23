@@ -44,7 +44,6 @@ class KafkaTransportTest extends TestCase
         $this->senderConfiguration = ConfigHelper::createSenderConfig($this->options);
         $this->receiverConfiguration = ConfigHelper::createReceiverConfig($this->options);
         $this->serializer = $this->createMock(SerializerInterface::class);
-        $this->logger = $this->createMock(KafkaLogger::class);
         $this->transport = new KafkaTransport($this->connection, $this->receiverConfiguration, $this->senderConfiguration, $this->serializer, $this->logger);
     }
 
@@ -60,11 +59,6 @@ class KafkaTransportTest extends TestCase
             ->expects(self::once())
             ->method('get')
             ->willReturn($kStamp)
-        ;
-
-        $this->logger
-            ->expects(self::once())
-            ->method('logReceive')
         ;
 
         $this->serializer
@@ -94,11 +88,6 @@ class KafkaTransportTest extends TestCase
             ->method('ack')
         ;
 
-        $this->logger
-            ->expects(self::once())
-            ->method('logAcknowledge')
-        ;
-
         $this->transport->ack($envelope);
     }
 
@@ -121,11 +110,6 @@ class KafkaTransportTest extends TestCase
             ->method('send')
         ;
 
-        $this->logger
-            ->expects(self::once())
-            ->method('logAcknowledge')
-        ;
-
         $this->transport->reject($envelope);
     }
 
@@ -141,11 +125,6 @@ class KafkaTransportTest extends TestCase
         $this->connection
             ->expects(self::once())
             ->method('send')
-        ;
-
-        $this->logger
-            ->expects(self::once())
-            ->method('logProduce')
         ;
 
         $this->transport->send($envelope);

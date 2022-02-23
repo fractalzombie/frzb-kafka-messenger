@@ -37,7 +37,6 @@ class KafkaSenderTest extends TestCase
         $this->configuration = new KafkaSenderConfiguration('test_topic', 10000, 3);
         $this->connection = $this->createMock(Connection::class);
         $this->serializer = $this->createMock(Serializer::class);
-        $this->logger = $this->createMock(KafkaLogger::class);
         $this->sender = new KafkaSender($this->connection, $this->configuration, $this->serializer, $this->logger);
     }
 
@@ -62,11 +61,6 @@ class KafkaSenderTest extends TestCase
         if ($isThrows) {
             $sendMethod->willThrowException($sendException);
         }
-
-        $this->logger
-            ->expects(self::once())
-            ->method($isThrows ? 'logError' : 'logProduce')
-        ;
 
         if ($isThrows) {
             $this->expectException(TransportException::class);

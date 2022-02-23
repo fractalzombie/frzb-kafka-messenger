@@ -29,7 +29,6 @@ class KafkaTransport implements TransportInterface
         private KafkaReceiverConfiguration $receiverConfiguration,
         private KafkaSenderConfiguration $senderConfiguration,
         private SerializerInterface $serializer,
-        private KafkaLogger $logger,
     ) {
     }
 
@@ -59,11 +58,11 @@ class KafkaTransport implements TransportInterface
 
     private function getReceiver(): KafkaReceiver
     {
-        return $this->receiver ??= new KafkaReceiver($this->connection, $this->getSender(), $this->receiverConfiguration, $this->serializer, $this->logger);
+        return $this->receiver ??= new KafkaReceiver($this->connection, $this->getSender(), $this->receiverConfiguration, $this->serializer);
     }
 
     private function getSender(): KafkaSender
     {
-        return $this->sender ??= new KafkaSender($this->connection, $this->senderConfiguration, $this->serializer, $this->logger);
+        return $this->sender ??= new KafkaSender($this->connection, $this->senderConfiguration, $this->serializer);
     }
 }

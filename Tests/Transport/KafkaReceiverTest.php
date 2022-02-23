@@ -44,9 +44,8 @@ class KafkaReceiverTest extends TestCase
         $this->configuration = new KafkaReceiverConfiguration('test_topic', 10000, true);
         $this->connection = $this->createMock(Connection::class);
         $this->serializer = $this->createMock(Serializer::class);
-        $this->logger = $this->createMock(KafkaLogger::class);
         $this->sender = $this->createMock(SenderInterface::class);
-        $this->receiver = new KafkaReceiver($this->connection, $this->sender, $this->configuration, $this->serializer, $this->logger);
+        $this->receiver = new KafkaReceiver($this->connection, $this->sender, $this->configuration, $this->serializer);
     }
 
     /** @dataProvider getMethodSuccessProvider */
@@ -59,11 +58,6 @@ class KafkaReceiverTest extends TestCase
             ->expects(self::once())
             ->method('get')
             ->willReturn($kStamp)
-        ;
-
-        $this->logger
-            ->expects(self::once())
-            ->method('logReceive')
         ;
 
         $this->serializer
@@ -117,18 +111,13 @@ class KafkaReceiverTest extends TestCase
             ->willThrowException($e)
         ;
 
-        $this->logger
-            ->expects(self::never())
-            ->method('logReceive')
-        ;
-
         $this->serializer
             ->expects(self::never())
             ->method('decode')
         ;
 
         match ($isKafkaException) {
-            true => $this->logger->expects(self::once())->method('logError'),
+            true => null,
             false => $this->expectException(TransportException::class),
         };
 
@@ -170,11 +159,6 @@ class KafkaReceiverTest extends TestCase
         if ($isAckThrows) {
             $ackMethod->willThrowException($ackException);
         }
-
-        $this->logger
-            ->expects($logExpects)
-            ->method($isThrows ? 'logError' : 'logAcknowledge')
-        ;
 
         if ($isThrows) {
             $this->expectException(TransportException::class);
