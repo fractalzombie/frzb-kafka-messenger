@@ -35,7 +35,7 @@ final class ConfigHelper
         return new KafkaSenderConfiguration(
             $options[self::KEY_TOPIC][self::KEY_TOPIC_NAME],
             $options[self::KEY_FLUSH_TIMEOUT] ?? 10000,
-            $options[self::KEY_FLUSH_RETRIES] ?? 0,
+            $options[self::KEY_FLUSH_RETRIES] ?? 3,
         );
     }
 }
