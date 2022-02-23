@@ -10,7 +10,6 @@ use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\KafkaMessage;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\MessageHelper;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\OptionsHelper;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\Connection;
-use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaLogger;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceivedStamp;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceiverConfiguration;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaSenderConfiguration;
@@ -34,7 +33,6 @@ class KafkaTransportTest extends TestCase
     private KafkaSenderConfiguration $senderConfiguration;
     private KafkaReceiverConfiguration $receiverConfiguration;
     private SerializerInterface $serializer;
-    private KafkaLogger $logger;
     private KafkaTransport $transport;
 
     protected function setUp(): void

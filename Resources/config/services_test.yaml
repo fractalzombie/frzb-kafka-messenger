@@ -1,23 +1,10 @@
-parameters:
-  env(MESSENGER_KAFKA_DEBUG): false
-  frzb.messenger.kafka.debug: '%env(bool:MESSENGER_KAFKA_DEBUG)'
-
 services:
   _defaults:
     autowire: true
     autoconfigure: true
     public: true
 
-  Psr\Log\NullLogger: ~
-
-  FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaLogger:
-    arguments:
-      - '@Psr\Log\NullLogger'
-
   messenger.transport.kafka.factory:
     class: FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaTransportFactory
-    arguments:
-      - '@FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaLogger'
-      - '%frzb.messenger.kafka.debug%'
     tags:
       - { name: 'messenger.transport_factory' }

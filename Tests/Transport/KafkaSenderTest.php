@@ -9,7 +9,6 @@ use FRZB\Component\Messenger\Bridge\Kafka\Exception\TransportException;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\KafkaMessage;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\MessageHelper;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\Connection;
-use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaLogger;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaSender;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaSenderConfiguration;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +28,6 @@ class KafkaSenderTest extends TestCase
     private KafkaSenderConfiguration $configuration;
     private Connection $connection;
     private Serializer $serializer;
-    private KafkaLogger $logger;
     private KafkaSender $sender;
 
     protected function setUp(): void

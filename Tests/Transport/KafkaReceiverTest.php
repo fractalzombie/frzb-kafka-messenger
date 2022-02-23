@@ -11,7 +11,6 @@ use FRZB\Component\Messenger\Bridge\Kafka\Exception\TransportException;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\KafkaMessage;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\MessageHelper;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\Connection;
-use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaLogger;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceivedStamp;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceiver;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceiverConfiguration;
@@ -35,7 +34,6 @@ class KafkaReceiverTest extends TestCase
     private KafkaReceiverConfiguration $configuration;
     private Connection $connection;
     private Serializer $serializer;
-    private KafkaLogger $logger;
     private KafkaReceiver $receiver;
     private SenderInterface $sender;
 
