@@ -33,7 +33,7 @@
         "symfony/process": "^5.4|^6.0",
         "symfony/property-access": "^5.4|^6.0",
         "symfony/serializer": "^5.4|^6.0",
-        "symfony/var-dumper": "^5.4|^6.0",
+        "symfony/var-dumper": "^5.4.x-dev",
         "symfony/uid": "^5.4|^6.0",
         "whsv26/functional": "^4.10",
         "friendsofphp/php-cs-fixer": "^3.4",
