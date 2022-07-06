@@ -30,7 +30,7 @@
         "php-coveralls/php-coveralls": "^2.5",
         "symfony/phpunit-bridge": "^5.4|^6.0",
         "symfony/event-dispatcher": "^5.4|^6.0",
-        "symfony/process": "^5.4|^6.0",
+        "symfony/process": "^5.4.x-dev",
         "symfony/property-access": "^5.4|^6.0",
         "symfony/serializer": "^5.4|^6.0",
         "symfony/var-dumper": "^5.4|^6.0",
