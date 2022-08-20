@@ -4,29 +4,15 @@ build:
       tests:
         override:
           - php-scrutinizer-run
-
-    coverage:
-      tests:
-        override:
-          - command: php -n -dzend_extension=xdebug -dxdebug.mode=coverage vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml --coverage-clover var/tests/coverage/coverage.xml
-            coverage:
-              file: var/tests/coverage/coverage.xml
-              format: clover
-
-  dependencies:
-    before:
-      - sudo apt-get install -y librdkafka1 librdkafka-dev
-
+  
   environment:
-    php:
-      version: 8.0.13
-      pecl_extensions:
-        - rdkafka
-        - xdebug
+    php: 8.1.9
+
 filter:
   excluded_paths:
+    - "Resources/*"
     - "Tests/*"
     - "var/*"
-    - "Resources/*"
+    - "build/*"
   dependency_paths:
     - "vendor/*"

@@ -16,7 +16,7 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Exception;
 use JetBrains\PhpStorm\Pure;
 
 /**
- * @codeCoverageIgnore
+ * @internal
  *
  * @author Mykhailo Shtanko <fractalzombie@gmail.com>
  */

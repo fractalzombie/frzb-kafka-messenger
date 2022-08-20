@@ -75,7 +75,7 @@ class KafkaReceiverTest extends TestCase
 
         self::assertNotNull($receivedStamp);
         self::assertInstanceOf(KafkaReceivedStamp::class, $receivedStamp);
-        self::assertSame($kStamp->getMessage(), $receivedStamp->getMessage()->getMessage());
+        self::assertSame($kStamp->message, $receivedStamp->message->message);
 
         self::assertNotNull($idStamp);
         self::assertInstanceOf(TransportMessageIdStamp::class, $idStamp);
@@ -114,10 +114,9 @@ class KafkaReceiverTest extends TestCase
             ->method('decode')
         ;
 
-        match ($isKafkaException) {
-            true => null,
-            false => $this->expectException(TransportException::class),
-        };
+        if (!$isKafkaException) {
+            $this->expectException(TransportException::class);
+        }
 
         $envelopes = ArrayList::collect($this->receiver->get());
 
@@ -168,7 +167,7 @@ class KafkaReceiverTest extends TestCase
     /** @throws \JsonException */
     public function ackMethodProvider(): iterable
     {
-        $body = json_encode(['id' => (string) Uuid::v4()], JSON_THROW_ON_ERROR);
+        $body = json_encode(['id' => (string) Uuid::v4()], \JSON_THROW_ON_ERROR);
         $kMessage = new KafkaMessage($body);
         $envelope = MessageHelper::createEnvelope($kMessage);
 
@@ -217,7 +216,7 @@ class KafkaReceiverTest extends TestCase
     public function testRejectMethod(Envelope $envelope, bool $isRejectable = false): void
     {
         $this->configuration = new KafkaReceiverConfiguration('test_topic', 10000, true, $isRejectable);
-        $this->receiver = new KafkaReceiver($this->connection, $this->sender, $this->configuration, $this->serializer, $this->logger);
+        $this->receiver = new KafkaReceiver($this->connection, $this->sender, $this->configuration, $this->serializer);
 
         $this->sender
             ->expects($isRejectable ? self::once() : self::never())
@@ -231,7 +230,7 @@ class KafkaReceiverTest extends TestCase
     /** @throws \JsonException */
     public function rejectMethodProvider(): iterable
     {
-        $body = json_encode(['id' => (string) Uuid::v4()], JSON_THROW_ON_ERROR);
+        $body = json_encode(['id' => (string) Uuid::v4()], \JSON_THROW_ON_ERROR);
         $kMessage = new KafkaMessage($body);
         $kStamp = MessageHelper::createKafkaStamp($body);
         $kReceivedStamp = MessageHelper::createKafkaReceivedStamp($kStamp);

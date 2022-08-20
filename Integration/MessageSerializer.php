@@ -7,6 +7,9 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Integration;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\Serializer;
 
+/**
+ * @author Mykhailo Shtanko <fractalzombie@gmail.com>
+ */
 abstract class MessageSerializer extends Serializer
 {
     public function decode(array $encodedEnvelope): Envelope

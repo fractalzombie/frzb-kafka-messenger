@@ -21,7 +21,7 @@ class KafkaMessageSerializerTest extends TestCase
     {
         $serializer = new KafkaMessageSerializer(DependencyHelper::getSymfonySerializer());
 
-        $data = ['body' => json_encode(['message' => 'hello world!'], JSON_THROW_ON_ERROR), 'headers' => ['type' => 'NoExistsMessage']];
+        $data = ['body' => json_encode(['message' => 'hello world!'], \JSON_THROW_ON_ERROR), 'headers' => ['type' => 'NoExistsMessage']];
 
         $envelope = $serializer->decode($data);
 

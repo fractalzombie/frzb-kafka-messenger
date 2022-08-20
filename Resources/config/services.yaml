@@ -1,9 +1,16 @@
-services:
-  _defaults:
+services: &services
+  _defaults: &defaults
     autowire: true
     autoconfigure: true
 
   messenger.transport.kafka.factory:
     class: FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaTransportFactory
     tags:
-      - { name: 'messenger.transport_factory' }
+    - { name: 'messenger.transport_factory' }
+
+when@test:
+  services:
+    <<: *services
+    _defaults:
+      <<: *defaults
+      public: true

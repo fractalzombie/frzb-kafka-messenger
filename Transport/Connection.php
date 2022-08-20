@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace FRZB\Component\Messenger\Bridge\Kafka\Transport;
 
+use FRZB\Component\Messenger\Bridge\Kafka\Enum\ResponseCode;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\ConnectionException;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\KafkaException;
 use RdKafka\Exception;
@@ -28,7 +29,7 @@ class Connection
     private KafkaProducer $producer;
 
     public function __construct(
-        private KafkaFactory $factory,
+        private readonly KafkaFactory $factory,
     ) {
     }
 
@@ -36,18 +37,18 @@ class Connection
     public function get(KafkaReceiverConfiguration $configuration): KafkaStamp
     {
         try {
-            $message = $this->getConsumer($configuration)->consume($configuration->getReceiveTimeout());
-        } catch (Exception $e) {
+            $message = $this->getConsumer($configuration)->consume($configuration->receiveTimeout);
+        } catch (\Throwable $e) {
             throw ConnectionException::fromThrowable($e);
         }
 
-        return match ($message->err) {
-            RD_KAFKA_RESP_ERR_NO_ERROR => KafkaStamp::fromMessage($message),
-            RD_KAFKA_RESP_ERR__PARTITION_EOF => throw KafkaException::partitionEof($message),
-            RD_KAFKA_RESP_ERR__TIMED_OUT => throw KafkaException::timeOut($message),
-            RD_KAFKA_RESP_ERR__TRANSPORT => throw KafkaException::transportError($message),
-            RD_KAFKA_RESP_ERR_UNKNOWN_TOPIC_OR_PART => throw KafkaException::unknownTopicOrPartition($message),
-            RD_KAFKA_RESP_ERR_TOPIC_EXCEPTION => throw KafkaException::topicException($message),
+        return match (ResponseCode::tryFrom($message->err)) {
+            ResponseCode::NoError => KafkaStamp::fromMessage($message),
+            ResponseCode::PartitionEof => throw KafkaException::partitionEof($message),
+            ResponseCode::TimedOut => throw KafkaException::timeOut($message),
+            ResponseCode::Transport => throw KafkaException::transportError($message),
+            ResponseCode::UnknownTopicOrPart => throw KafkaException::unknownTopicOrPartition($message),
+            ResponseCode::TopicException => throw KafkaException::topicException($message),
             default => throw ConnectionException::fromMessage($message),
         };
     }
@@ -56,9 +57,9 @@ class Connection
     public function ack(KafkaStamp $message, KafkaReceiverConfiguration $configuration): void
     {
         try {
-            $configuration->isCommitAsync()
-                ? $this->getConsumer($configuration)->commitAsync($message->getMessage())
-                : $this->getConsumer($configuration)->commit($message->getMessage());
+            $configuration->isCommitAsync
+                ? $this->getConsumer($configuration)->commitAsync($message->message)
+                : $this->getConsumer($configuration)->commit($message->message);
         } catch (Exception $e) {
             throw ConnectionException::fromThrowable($e);
         }
@@ -67,20 +68,20 @@ class Connection
     /** @throws ConnectionException */
     public function send(array $payload, KafkaSenderConfiguration $configuration): void
     {
-        $topic = $this->getProducer()->newTopic($configuration->getTopicName());
+        $topic = $this->getProducer()->newTopic($configuration->topicName);
 
         $topic->producev(
-            RD_KAFKA_PARTITION_UA,
-            0,
+            $configuration->messagePartition,
+            $configuration->messageFlag->getFlag(),
             $payload['body'],
-            $payload['key'] ?? null,
+            $payload['key'] ?? $configuration->messageKey,
             $payload['headers'] ?? [],
-            $payload['timestamp_ms'] ?? null,
+            $payload['timestamp_ms'] ?? (new \DateTimeImmutable())->getTimestamp(),
         );
 
-        for ($retry = 0; $retry < $configuration->getFlushRetries(); ++$retry) {
-            $code = $this->getProducer()->flush($configuration->getFlushTimeout());
-            $isLastTry = $retry === $configuration->getFlushRetries() - 1;
+        for ($retry = 0; $retry < $configuration->flushRetries; ++$retry) {
+            $code = $this->getProducer()->flush($configuration->flushTimeout);
+            $isLastTry = $retry === $configuration->flushRetries - 1;
             $isFlushed = RD_KAFKA_RESP_ERR_NO_ERROR === $code;
 
             if (!$isFlushed && $isLastTry) {
@@ -100,17 +101,17 @@ class Connection
 
     private function getConsumer(KafkaReceiverConfiguration $configuration): KafkaConsumer
     {
-        $this->consumer ??= $this->factory->createConsumer();
+        try {
+            $this->consumer ??= $this->factory->createConsumer();
 
-        if (!$configuration->isSubscribed()) {
-            try {
-                $this->consumer->subscribe([$configuration->getTopicName()]);
-                $configuration->setSubscribed(true);
-            } catch (Exception $e) {
-                throw ConnectionException::fromThrowable($e);
+            if (!$configuration->isSubscribed) {
+                $this->consumer->subscribe([$configuration->topicName]);
+                $configuration->isSubscribed = true;
             }
-        }
 
-        return $this->consumer;
+            return $this->consumer;
+        } catch (\Throwable $e) {
+            throw ConnectionException::fromThrowable($e);
+        }
     }
 }

@@ -16,6 +16,8 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Exception;
 use RdKafka\Message;
 
 /**
+ * @internal
+ *
  * @author Mykhailo Shtanko <fractalzombie@gmail.com>
  */
 final class KafkaException extends \LogicException

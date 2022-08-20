@@ -13,24 +13,26 @@ declare(strict_types=1);
 
 namespace FRZB\Component\Messenger\Bridge\Kafka\Transport;
 
+use JetBrains\PhpStorm\Immutable;
 use JetBrains\PhpStorm\Pure;
 use RdKafka\Message;
 
 /**
  * @author Mykhailo Shtanko <fractalzombie@gmail.com>
  */
+#[Immutable]
 final class KafkaStamp
 {
     public function __construct(
-        private Message $message,
-        private string $topicName,
-        private int $offset,
-        private int $timestamp,
-        private string $body = '',
-        private array $headers = [],
-        private int $partition = RD_KAFKA_PARTITION_UA,
-        private ?string $key = null,
-        private bool $isRedelivered = false,
+        public readonly Message $message,
+        public readonly string $topicName,
+        public readonly int $offset,
+        public readonly int $timestamp,
+        public readonly string $body,
+        public readonly array $headers,
+        public readonly ?int $partition = null,
+        public readonly ?string $key = null,
+        public readonly bool $isRedelivered = false,
     ) {
     }
 
@@ -42,56 +44,11 @@ final class KafkaStamp
             $message->topic_name,
             $message->offset,
             $message->timestamp,
-            $message->payload,
+            $message->payload ?? '',
             $message->headers ?? [],
-            $message->partition ?? RD_KAFKA_PARTITION_UA,
+            $message->partition,
             $message->key,
             $isRedelivered,
         );
-    }
-
-    public function getMessage(): Message
-    {
-        return $this->message;
-    }
-
-    public function getTopicName(): string
-    {
-        return $this->topicName;
-    }
-
-    public function getOffset(): int
-    {
-        return $this->offset;
-    }
-
-    public function getTimestamp(): int
-    {
-        return $this->timestamp;
-    }
-
-    public function getBody(): string
-    {
-        return $this->body;
-    }
-
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    public function getPartition(): int
-    {
-        return $this->partition;
-    }
-
-    public function isRedelivered(): bool
-    {
-        return $this->isRedelivered;
-    }
-
-    public function getKey(): ?string
-    {
-        return $this->key;
     }
 }

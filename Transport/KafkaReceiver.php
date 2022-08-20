@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace FRZB\Component\Messenger\Bridge\Kafka\Transport;
 
-use FRZB\Component\Messenger\Bridge\Kafka\Exception\ConnectionException;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\KafkaException;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\TransportException;
 use Symfony\Component\Messenger\Envelope;
@@ -43,21 +42,21 @@ class KafkaReceiver implements ReceiverInterface
             $message = $this->connection->get($this->configuration);
 
             $envelope = $this->serializer->decode([
-                'topic_name' => $message->getTopicName(),
-                'offset' => $message->getOffset(),
-                'timestamp' => $message->getTimestamp(),
-                'body' => $message->getBody(),
-                'headers' => $message->getHeaders(),
-                'partition' => $message->getPartition(),
-                'key' => $message->getKey(),
-                'is_redelivered' => $message->isRedelivered(),
+                'topic_name' => $message->topicName,
+                'offset' => $message->offset,
+                'timestamp' => $message->timestamp,
+                'body' => $message->body,
+                'headers' => $message->headers,
+                'partition' => $message->partition,
+                'key' => $message->key,
+                'is_redelivered' => $message->isRedelivered,
             ]);
 
-            yield $envelope->with(new KafkaReceivedStamp($message, $message->getTopicName()));
+            yield $envelope->with(new KafkaReceivedStamp($message, $message->topicName));
         } catch (KafkaException) {
             return [];
-        } catch (ConnectionException $e) {
-            throw new TransportException($e->getMessage(), $e->getCode(), $e);
+        } catch (\Throwable $e) {
+            throw TransportException::fromThrowable($e);
         }
     }
 
@@ -67,8 +66,8 @@ class KafkaReceiver implements ReceiverInterface
         $stamp = $envelope->last(KafkaReceivedStamp::class) ?? throw TransportException::noReceivedStamp($envelope);
 
         try {
-            $this->connection->ack($stamp->getMessage(), $this->configuration);
-        } catch (ConnectionException $e) {
+            $this->connection->ack($stamp->message, $this->configuration);
+        } catch (\Throwable $e) {
             throw TransportException::fromThrowable($e);
         }
     }
@@ -76,7 +75,7 @@ class KafkaReceiver implements ReceiverInterface
     /** {@inheritdoc} */
     public function reject(Envelope $envelope): void
     {
-        if ($this->configuration->isRejectable()) {
+        if ($this->configuration->isRejectable) {
             $this->ack($envelope);
             $this->sender->send($envelope);
         }

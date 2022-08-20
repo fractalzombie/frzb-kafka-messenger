@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace FRZB\Component\Messenger\Bridge\Kafka\Transport;
 
+use JetBrains\PhpStorm\Immutable;
 use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
 
 /**
@@ -20,24 +21,12 @@ use Symfony\Component\Messenger\Stamp\NonSendableStampInterface;
  *
  * @author Mykhailo Shtanko <fractalzombie@gmail.com>
  */
+#[Immutable]
 class KafkaReceivedStamp implements NonSendableStampInterface
 {
-    private KafkaStamp $message;
-    private string $topicName;
-
-    public function __construct(KafkaStamp $message, string $topicName)
-    {
-        $this->message = $message;
-        $this->topicName = $topicName;
-    }
-
-    public function getMessage(): KafkaStamp
-    {
-        return $this->message;
-    }
-
-    public function getTopicName(): string
-    {
-        return $this->topicName;
+    public function __construct(
+        public readonly KafkaStamp $message,
+        public readonly string $topicName
+    ) {
     }
 }

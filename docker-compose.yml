@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  php:
+    build: .docker/php
+    environment:
+      MESSENGER_KAFKA_DSN: ${MESSENGER_KAFKA_DSN}
+      MESSENGER_KAFKA_DEBUG: ${MESSENGER_KAFKA_DEBUG}
+      RDKAFKA_ADDRESS: ${RDKAFKA_ADDRESS}
+      RDKAFKA_DSN: ${RDKAFKA_DSN}
+    env_file:
+      - '.env'
+    extra_hosts:
+      - 'kafka:${RDKAFKA_HOST}'
+    volumes:
+      - ./:/var/www/html:cached

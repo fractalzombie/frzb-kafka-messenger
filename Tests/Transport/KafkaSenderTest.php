@@ -6,11 +6,11 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Tests\Transport;
 
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\ConnectionException;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\TransportException;
+use FRZB\Component\Messenger\Bridge\Kafka\Helper\ConfigHelper;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\KafkaMessage;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\MessageHelper;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\Connection;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaSender;
-use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaSenderConfiguration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface as Serializer;
@@ -25,17 +25,15 @@ use Symfony\Component\Uid\Uuid;
  */
 class KafkaSenderTest extends TestCase
 {
-    private KafkaSenderConfiguration $configuration;
     private Connection $connection;
     private Serializer $serializer;
     private KafkaSender $sender;
 
     protected function setUp(): void
     {
-        $this->configuration = new KafkaSenderConfiguration('test_topic', 10000, 3);
         $this->connection = $this->createMock(Connection::class);
         $this->serializer = $this->createMock(Serializer::class);
-        $this->sender = new KafkaSender($this->connection, $this->configuration, $this->serializer, $this->logger);
+        $this->sender = new KafkaSender($this->connection, ConfigHelper::createSenderConfig(['topic' => ['name' => 'test_topic']]), $this->serializer);
     }
 
     /** @dataProvider sendMethodProvider */
@@ -69,7 +67,7 @@ class KafkaSenderTest extends TestCase
 
     public function sendMethodProvider(): iterable
     {
-        $body = json_encode(['id' => (string) Uuid::v4()], JSON_THROW_ON_ERROR);
+        $body = json_encode(['id' => (string) Uuid::v4()], \JSON_THROW_ON_ERROR);
         $kMessage = new KafkaMessage($body);
         $kStamp = MessageHelper::createKafkaStamp($body);
         $kReceivedStamp = MessageHelper::createKafkaReceivedStamp($kStamp);

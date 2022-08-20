@@ -18,45 +18,13 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Transport;
  */
 final class KafkaReceiverConfiguration
 {
-    private bool $isSubscribed = false;
+    public bool $isSubscribed = false;
 
     public function __construct(
-        private string $topicName,
-        private int $receiveTimeout,
-        private bool $isCommitAsync,
-        private bool $isRejectable = false,
+        public readonly string $topicName,
+        public readonly int $receiveTimeout,
+        public readonly bool $isCommitAsync,
+        public readonly bool $isRejectable = false,
     ) {
-    }
-
-    public function getTopicName(): string
-    {
-        return $this->topicName;
-    }
-
-    public function getReceiveTimeout(): int
-    {
-        return $this->receiveTimeout;
-    }
-
-    public function isCommitAsync(): bool
-    {
-        return $this->isCommitAsync;
-    }
-
-    public function isRejectable(): bool
-    {
-        return $this->isRejectable;
-    }
-
-    public function isSubscribed(): bool
-    {
-        return $this->isSubscribed;
-    }
-
-    public function setSubscribed(bool $isSubscribed): self
-    {
-        $this->isSubscribed = $isSubscribed;
-
-        return $this;
     }
 }

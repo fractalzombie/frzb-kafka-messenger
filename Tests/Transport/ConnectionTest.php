@@ -92,9 +92,9 @@ class ConnectionTest extends TestCase
         $rMessage = $this->connection->get($configuration);
 
         self::assertNotNull($rMessage);
-        self::assertSame($sMessage, $rMessage->getMessage());
+        self::assertSame($sMessage, $rMessage->message);
         self::assertSame($args['error'], $sMessage->err);
-        self::assertSame($args['error'], $rMessage->getMessage()->err);
+        self::assertSame($args['error'], $rMessage->message->err);
     }
 
     /** @throws \JsonException */

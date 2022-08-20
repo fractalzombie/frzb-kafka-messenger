@@ -1,12 +1,10 @@
-name: CI
-
 on:
   push:
     branches: [ main ]
-
+  
   pull_request:
     branches: [ main ]
-
+  
   page_build:
   release:
     types: [ published, created, edited ]
@@ -14,18 +12,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     strategy:
       matrix:
         php:
-          - "8.0"
-          - "8.1"
+        - "8.1"
         include:
-          - php-version: "8.0"
-            composer-options: "--ignore-platform-reqs"
-
-          - php-version: "8.1"
-            composer-options: "--ignore-platform-reqs"
+        - php-version: "8.1"
+          composer-options: "--ignore-platform-reqs"
 
     services:
       kafka:
@@ -41,56 +35,78 @@ jobs:
           - 8082:8082
           - 8083:8083
           - 2181:2181
-
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      - name: Install rdkafka
-        run: sudo add-apt-repository universe && sudo apt update && sudo apt install netcat librdkafka1 librdkafka-dev
+    - name: Install rdkafka
+      run: sudo add-apt-repository universe && sudo apt update && sudo apt install netcat librdkafka1 librdkafka-dev
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: "${{ matrix.php }}"
+        extensions: mbstring, intl, rdkafka
+        coverage: xdebug
+        tools: pecl, phpunit, composer
+        ini-values: post_max_size=256M
+      env:
+        MESSENGER_KAFKA_DSN: ${{ secrets.MESSENGER_KAFKA_DSN }}
+        MESSENGER_KAFKA_DEBUG: ${{ secrets.MESSENGER_KAFKA_DEBUG }}
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "${{ matrix.php }}"
-          extensions: mbstring, intl, rdkafka
-          coverage: xdebug
-          tools: pecl, phpunit, composer
-          ini-values: post_max_size=256M
-        env:
-          runner: kafka-messenger
-          MESSENGER_KAFKA_DSN: 'kafka://0.0.0.0:9092'
-          MESSENGER_KAFKA_DEBUG: false
+    - name: Check Kafka Extension
+      run: php -v && php --ri rdkafka
+    
+    - name: Setup Composer
+      uses: ramsey/composer-install@v1
+      with:
+        composer-options: "${{ matrix.composer-options }}"
+    
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+    
+    - name: Install dependencies
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: composer update --prefer-dist --no-progress
+    
+    - name: Setup tests directories
+      run:  mkdir -p build/logs
 
-      - name: Check Kafka Extension
-        run: php -v && php --ri rdkafka
-
-      - name: Setup Composer
-        uses: ramsey/composer-install@v1
-        with:
-          composer-options: "${{ matrix.composer-options }}"
-
-      - name: Validate composer.json and composer.lock
-        run: composer validate
-
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v2
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
-
-      - name: Install dependencies
-        if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: composer install
-
-      - name: Wait for Kafka
-        run: .github/workflows/wait-for-kafka.sh
-
-      - name: Unit Tests
-        run: ./vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml
-        env:
-          MESSENGER_KAFKA_DSN: 'kafka://0.0.0.0:9092'
-          MESSENGER_KAFKA_DEBUG: false
+    - name: Wait for Kafka
+      run: .github/workflows/wait-for-kafka.sh -s localhost -p 2181
+    
+    - name: Unit Tests
+      run: ./vendor/bin/phpunit --colors=always --configuration phpunit.xml.dist
+      env:
+        MESSENGER_KAFKA_DSN: ${{ secrets.MESSENGER_KAFKA_DSN }}
+        MESSENGER_KAFKA_DEBUG: ${{ secrets.MESSENGER_KAFKA_DEBUG }}
+        
+    - name: Push to Coveralls
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_PARALLEL: true
+        COVERALLS_FLAG_NAME: php-${{ matrix.php-versions }}
+      run: |
+        composer global require php-coveralls/php-coveralls
+        php-coveralls -v
+  
+  finish:
+    needs: [ build ]
+    runs-on: ubuntu-18.04
+    
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true

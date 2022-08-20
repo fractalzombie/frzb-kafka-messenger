@@ -10,6 +10,11 @@ use Symfony\Component\Messenger\Exception\TransportException as BaseTransportExc
 use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 use Symfony\Component\Uid\Uuid;
 
+/**
+ * @internal
+ *
+ * @author Mykhailo Shtanko <fractalzombie@gmail.com>
+ */
 final class TransportException extends BaseTransportException
 {
     private const NO_RECEIVED_STAMP_MESSAGE = 'Message "%s" with id "%s" has no "%s" stamp';

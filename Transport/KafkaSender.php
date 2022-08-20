@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace FRZB\Component\Messenger\Bridge\Kafka\Transport;
 
-use FRZB\Component\Messenger\Bridge\Kafka\Exception\ConnectionException;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\TransportException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Sender\SenderInterface;
@@ -27,9 +26,9 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 class KafkaSender implements SenderInterface
 {
     public function __construct(
-        private Connection $connection,
-        private KafkaSenderConfiguration $configuration,
-        private SerializerInterface $serializer,
+        private readonly Connection $connection,
+        private readonly KafkaSenderConfiguration $configuration,
+        private readonly SerializerInterface $serializer,
     ) {
     }
 
@@ -39,7 +38,7 @@ class KafkaSender implements SenderInterface
         try {
             $payload = $this->serializer->encode($envelope);
             $this->connection->send($payload, $this->configuration);
-        } catch (ConnectionException $e) {
+        } catch (\Throwable $e) {
             throw TransportException::fromThrowable($e);
         }
 

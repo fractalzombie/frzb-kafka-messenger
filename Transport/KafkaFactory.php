@@ -29,7 +29,7 @@ class KafkaFactory
     private const OPTIONS_TOPIC_KEY = 'topic_conf';
 
     public function __construct(
-        private KafkaConfiguration $configuration,
+        private readonly KafkaConfiguration $configuration,
     ) {
     }
 

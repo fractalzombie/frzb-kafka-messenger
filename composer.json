@@ -16,28 +16,26 @@
         }
     ],
     "require": {
-        "php": "^8.0|^8.1",
+        "php": "^8.1",
         "ext-rdkafka": "^5|^6",
-        "symfony/messenger": "^5.4|^6.0",
-        "symfony/framework-bundle": "^5.4|^6.0",
-        "symfony/dependency-injection": "^5.4|^6.0",
-        "symfony/yaml": "^5.4|^6.0"
+        "symfony/messenger": "^5.4|^6",
+        "symfony/framework-bundle": "^5.4|^6",
+        "symfony/dependency-injection": "^5.4|^6",
+        "symfony/yaml": "^5.4|^6"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.5",
         "phpunit/php-code-coverage": "^9.2",
-        "php-coveralls/php-coveralls": "^2.5",
-        "symfony/phpunit-bridge": "^5.4|^6.0",
-        "symfony/event-dispatcher": "^5.4|^6.0",
-        "symfony/process": "^5.4|^6.0",
-        "symfony/property-access": "^5.4|^6.0",
-        "symfony/serializer": "^5.4|^6.0",
-        "symfony/var-dumper": "^5.4|^6.0",
-        "symfony/uid": "^5.4|^6.0",
+        "symfony/phpunit-bridge": "^5.4|^6",
+        "symfony/event-dispatcher": "^5.4|^6",
+        "symfony/process": "^5.4|^6",
+        "symfony/property-access": "^5.4|^6",
+        "symfony/serializer": "^5.4|^6",
+        "symfony/var-dumper": "^5.4|^6",
+        "symfony/uid": "^5.4|^6",
         "whsv26/functional": "^4.10",
         "friendsofphp/php-cs-fixer": "^3.4",
-        "sempro/phpunit-pretty-print": "dev-develop"
+        "sempro/phpunit-pretty-print": "^1.4"
     },
     "autoload": {
         "psr-4": { "FRZB\\Component\\Messenger\\Bridge\\Kafka\\": "" },
@@ -47,5 +45,6 @@
         "test": ["php vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml"],
         "test-coverage": ["php vendor/bin/phpunit --colors=always --verbose --configuration phpunit.xml.dist --log-junit var/tests/.phpunit.output.xml --coverage-html var/tests/coverage --coverage-clover var/tests/coverage/coverage.xml"]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

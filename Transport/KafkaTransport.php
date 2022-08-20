@@ -25,10 +25,10 @@ class KafkaTransport implements TransportInterface
 {
     #[Pure]
     public function __construct(
-        private Connection $connection,
-        private KafkaReceiverConfiguration $receiverConfiguration,
-        private KafkaSenderConfiguration $senderConfiguration,
-        private SerializerInterface $serializer,
+        private readonly Connection $connection,
+        private readonly KafkaReceiverConfiguration $receiverConfiguration,
+        private readonly KafkaSenderConfiguration $senderConfiguration,
+        private readonly SerializerInterface $serializer,
     ) {
     }
 

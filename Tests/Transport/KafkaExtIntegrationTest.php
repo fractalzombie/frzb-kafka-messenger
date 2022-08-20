@@ -43,6 +43,7 @@ class KafkaExtIntegrationTest extends TestCase
 
         $envelopes = ArrayList::collect($transport->get());
         $this->assertCount(1, $envelopes);
+
         /** @var Envelope $envelope */
         $envelope = $envelopes->firstElement()->get();
         $transport->ack($envelope);

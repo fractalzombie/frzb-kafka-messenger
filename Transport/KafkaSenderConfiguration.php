@@ -13,30 +13,22 @@ declare(strict_types=1);
 
 namespace FRZB\Component\Messenger\Bridge\Kafka\Transport;
 
+use FRZB\Component\Messenger\Bridge\Kafka\Enum\MessageFlag;
+use JetBrains\PhpStorm\Immutable;
+
 /**
  * @author Mykhailo Shtanko <fractalzombie@gmail.com>
  */
+#[Immutable]
 final class KafkaSenderConfiguration
 {
     public function __construct(
-        private string $topicName,
-        private int $flushTimeout,
-        private int $flushRetries,
+        public readonly string $topicName,
+        public readonly int $flushTimeout,
+        public readonly int $flushRetries,
+        public readonly MessageFlag $messageFlag,
+        public readonly int $messagePartition,
+        public readonly ?string $messageKey,
     ) {
-    }
-
-    public function getTopicName(): string
-    {
-        return $this->topicName;
-    }
-
-    public function getFlushTimeout(): int
-    {
-        return $this->flushTimeout;
-    }
-
-    public function getFlushRetries(): int
-    {
-        return $this->flushRetries;
     }
 }

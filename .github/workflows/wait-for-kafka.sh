@@ -1,11 +1,14 @@
 #! /bin/bash
-end=$((SECONDS+60))
+END=$((SECONDS+60))
+SLEEP_TIME_BEFORE_RECONNECT=5
 
-while [ $SECONDS -lt $end ]; do
+while [ $SECONDS -lt $END ]; do
     if echo dump | nc localhost 2181 | grep broker ; then
         exit 0
     else
-        echo "Kafka didn't start in time"
+  echo "$(date) - Trying connect to kafka:2181"
     fi
-    sleep 1
+  sleep $SLEEP_TIME_BEFORE_RECONNECT
 done
+
+echo "$(date) - Connection to kafka:2181 established"

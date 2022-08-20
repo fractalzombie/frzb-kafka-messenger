@@ -15,7 +15,6 @@ use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceiverConfiguration;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaSenderConfiguration;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaTransport;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Uid\Uuid;
 
@@ -42,13 +41,13 @@ class KafkaTransportTest extends TestCase
         $this->senderConfiguration = ConfigHelper::createSenderConfig($this->options);
         $this->receiverConfiguration = ConfigHelper::createReceiverConfig($this->options);
         $this->serializer = $this->createMock(SerializerInterface::class);
-        $this->transport = new KafkaTransport($this->connection, $this->receiverConfiguration, $this->senderConfiguration, $this->serializer, $this->logger);
+        $this->transport = new KafkaTransport($this->connection, $this->receiverConfiguration, $this->senderConfiguration, $this->serializer);
     }
 
     /** @throws \JsonException */
     public function testGetMethod(): void
     {
-        $body = json_encode(['id' => (string) Uuid::v4()], JSON_THROW_ON_ERROR);
+        $body = json_encode(['id' => (string) Uuid::v4()], \JSON_THROW_ON_ERROR);
         $kMessage = new KafkaMessage($body);
         $kStamp = MessageHelper::createKafkaStamp($body);
         $kReceivedStamp = MessageHelper::createKafkaReceivedStamp($kStamp);
@@ -65,17 +64,16 @@ class KafkaTransportTest extends TestCase
             ->willReturn(MessageHelper::createEnvelope($kMessage, [$kReceivedStamp]))
         ;
 
-        /** @var ArrayList<Envelope> $envelopes */
         $envelopes = ArrayList::collect($this->transport->get());
 
-        self::assertSame($kReceivedStamp->getMessage(), $envelopes->firstElement()->get()->last(KafkaReceivedStamp::class)?->getMessage());
-        self::assertSame($kReceivedStamp->getTopicName(), $envelopes->firstElement()->get()->last(KafkaReceivedStamp::class)?->getTopicName());
+        self::assertSame($kReceivedStamp->message, $envelopes->firstElement()->get()->last(KafkaReceivedStamp::class)?->message);
+        self::assertSame($kReceivedStamp->topicName, $envelopes->firstElement()->get()->last(KafkaReceivedStamp::class)?->topicName);
     }
 
     /** @throws \JsonException */
     public function testAckMethod(): void
     {
-        $body = json_encode(['id' => (string) Uuid::v4()], JSON_THROW_ON_ERROR);
+        $body = json_encode(['id' => (string) Uuid::v4()], \JSON_THROW_ON_ERROR);
         $kMessage = new KafkaMessage($body);
         $kStamp = MessageHelper::createKafkaStamp($body);
         $kReceivedStamp = MessageHelper::createKafkaReceivedStamp($kStamp);
@@ -92,7 +90,7 @@ class KafkaTransportTest extends TestCase
     /** @throws \JsonException */
     public function testRejectMethod(): void
     {
-        $body = json_encode(['id' => (string) Uuid::v4()], JSON_THROW_ON_ERROR);
+        $body = json_encode(['id' => (string) Uuid::v4()], \JSON_THROW_ON_ERROR);
         $kMessage = new KafkaMessage($body);
         $kStamp = MessageHelper::createKafkaStamp($body);
         $kReceivedStamp = MessageHelper::createKafkaReceivedStamp($kStamp);
@@ -114,7 +112,7 @@ class KafkaTransportTest extends TestCase
     /** @throws \JsonException */
     public function testSendMethod(): void
     {
-        $body = json_encode(['id' => (string) Uuid::v4()], JSON_THROW_ON_ERROR);
+        $body = json_encode(['id' => (string) Uuid::v4()], \JSON_THROW_ON_ERROR);
         $kMessage = new KafkaMessage($body);
         $kStamp = MessageHelper::createKafkaStamp($body);
         $kReceivedStamp = MessageHelper::createKafkaReceivedStamp($kStamp);
