@@ -28,10 +28,10 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface as S
 class KafkaReceiver implements ReceiverInterface
 {
     public function __construct(
-        private Connection $connection,
-        private KafkaSender $sender,
-        private KafkaReceiverConfiguration $configuration,
-        private Serializer $serializer,
+        private readonly Connection $connection,
+        private readonly KafkaSender $sender,
+        private readonly KafkaReceiverConfiguration $configuration,
+        private readonly Serializer $serializer,
     ) {
     }
 
