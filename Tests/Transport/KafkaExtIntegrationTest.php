@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace FRZB\Component\Messenger\Bridge\Kafka\Tests\Transport;
 
 use Fp\Collections\ArrayList;
-use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\KafkaMessage;
+use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\Message\KafkaMessage;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\OptionsHelper;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceivedStamp;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaTransportFactory;

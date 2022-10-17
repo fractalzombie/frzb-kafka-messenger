@@ -8,7 +8,7 @@ use Fp\Collections\ArrayList;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\ConnectionException;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\KafkaException;
 use FRZB\Component\Messenger\Bridge\Kafka\Exception\TransportException;
-use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\KafkaMessage;
+use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\Message\KafkaMessage;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\MessageHelper;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\Connection;
 use FRZB\Component\Messenger\Bridge\Kafka\Transport\KafkaReceivedStamp;

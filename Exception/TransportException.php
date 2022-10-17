@@ -11,8 +11,6 @@ use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * @internal
- *
  * @author Mykhailo Shtanko <fractalzombie@gmail.com>
  */
 final class TransportException extends BaseTransportException

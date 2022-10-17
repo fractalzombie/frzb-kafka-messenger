@@ -16,8 +16,6 @@ namespace FRZB\Component\Messenger\Bridge\Kafka\Exception;
 use JetBrains\PhpStorm\Pure;
 
 /**
- * @internal
- *
  * @author Mykhailo Shtanko <fractalzombie@gmail.com>
  */
 final class ExtensionException extends \LogicException

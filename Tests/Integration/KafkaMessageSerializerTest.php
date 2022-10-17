@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace FRZB\Component\Messenger\Bridge\Kafka\Tests\Integration;
 
 use FRZB\Component\Messenger\Bridge\Kafka\Integration\MessageSerializer;
-use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\KafkaMessage;
+use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\Message\KafkaMessage;
+use FRZB\Component\Messenger\Bridge\Kafka\Tests\Fixtures\Serializer\KafkaMessageSerializer;
 use FRZB\Component\Messenger\Bridge\Kafka\Tests\Helper\DependencyHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -26,13 +27,5 @@ class KafkaMessageSerializerTest extends TestCase
         $envelope = $serializer->decode($data);
 
         self::assertInstanceOf(KafkaMessage::class, $envelope->getMessage());
-    }
-}
-
-final class KafkaMessageSerializer extends MessageSerializer
-{
-    protected static function getMessageType(): string
-    {
-        return KafkaMessage::class;
     }
 }
