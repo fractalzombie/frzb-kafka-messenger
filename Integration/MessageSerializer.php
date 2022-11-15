@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FRZB\Component\Messenger\Bridge\Kafka\Integration;
 
+use FRZB\Component\Messenger\Bridge\Kafka\Helper\ClassHelper;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\Serializer;
 
@@ -26,6 +27,8 @@ abstract class MessageSerializer extends Serializer
 
     private static function getHeaders(array $decodedEnvelope): array
     {
-        return array_merge($decodedEnvelope['headers'] ?? [], ['type' => static::getMessageType()]);
+        $className = ClassHelper::getClassName(static::getMessageType(), self::getBody($decodedEnvelope));
+
+        return [...$decodedEnvelope['headers'] ?? [], ...['type' => $className]];
     }
 }
