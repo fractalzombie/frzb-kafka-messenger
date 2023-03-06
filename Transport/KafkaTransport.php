@@ -23,6 +23,9 @@ use Symfony\Component\Messenger\Transport\TransportInterface;
  */
 class KafkaTransport implements TransportInterface
 {
+    private KafkaReceiver $receiver;
+    private KafkaSender $sender;
+
     #[Pure]
     public function __construct(
         private readonly Connection $connection,
