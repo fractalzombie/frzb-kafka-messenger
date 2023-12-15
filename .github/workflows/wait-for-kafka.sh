@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 END=$((SECONDS+60))
 SLEEP_TIME_BEFORE_RECONNECT=5
 
